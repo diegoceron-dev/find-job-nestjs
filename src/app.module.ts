@@ -4,11 +4,11 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { JobModule } from './job/job.module';
 import { ResumeModule } from './resume/resume.module';
-import { ApplicationsModule } from './applications/applications.module';
 import { ApplyModule } from './apply/apply.module';
+import { CompanyModule } from './company/company.module';
 
 @Module({
-  imports: [UserModule, JobModule, ResumeModule, ApplicationsModule, ApplyModule],
+  imports: [UserModule, JobModule, ResumeModule, ApplyModule, CompanyModule],
   controllers: [AppController],
   providers: [AppService],
 })
