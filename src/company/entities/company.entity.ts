@@ -1,5 +1,5 @@
 export class Company {
-    UUID: string
+    id: number
     name: string
     description: string
     rfc: string

@@ -1,4 +1,4 @@
 export class Resume {
-    UUID: string
+    id: number
     file: string
 }

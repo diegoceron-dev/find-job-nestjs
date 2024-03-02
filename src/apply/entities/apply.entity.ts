@@ -1,5 +1,5 @@
 export class Apply {
-    UUID: string
+    id: number
     userId: string
     jobId: string
 }

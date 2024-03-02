@@ -1,5 +1,5 @@
 export class Job {
-    UUID: string
+    id: number
     title: string
     description: string
     monthlySalary: number

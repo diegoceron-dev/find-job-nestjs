@@ -1,5 +1,5 @@
 export class User {
-    UUID: string
+    id: number
     email: string
     password: string
     type: "employee"|"employer"
