@@ -1,1 +1,4 @@
-export class Resume {}
+export class Resume {
+    UUID: string
+    file: string
+}
