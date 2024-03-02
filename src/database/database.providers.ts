@@ -1,18 +1,20 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
-@Module({
-  imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'tu_usuario',
-      password: 'tu_contraseña',
-      database: 'tu_basededatos',
-      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-      synchronize: true
-    }),
-  ],
-})
-export class DatabaseModule {}
+export const databaseProviders = [
+  {
+    provide: 'DATA_SOURCE',
+    useFactory: async () => {
+      const dataSource = new DataSource({
+        type: 'postgres',
+        url: process.env.DATABASE_URL,
+        ssl: true,
+        entities: [
+            __dirname + '/../**/*.entity{.ts,.js}',
+        ],
+        synchronize: true,
+      });
+
+      return dataSource.initialize();
+    },
+  },
+];
