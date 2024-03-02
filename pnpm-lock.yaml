@@ -20,6 +20,9 @@ dependencies:
   reflect-metadata:
     specifier: ^0.2.0
     version: 0.2.1
+  res:
+    specifier: ^0.4.0
+    version: 0.4.0
   rxjs:
     specifier: ^7.8.1
     version: 7.8.1
@@ -4322,6 +4325,10 @@ packages:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==, tarball: https://registry.npmjs.org/require-from-string/-/require-from-string-2.0.2.tgz}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /res@0.4.0:
+    resolution: {integrity: sha512-GIpSc5wCvGw8uCLubn2RuQ2vBAqSv5uNtzDGpWuw6HVSRiUnHYcWf/5oac8FPglifVOgvV6bWNJpeSLmqZdYLA==, tarball: https://registry.npmjs.org/res/-/res-0.4.0.tgz}
+    dev: false
 
   /resolve-cwd@3.0.0:
     resolution: {integrity: sha512-OrZaX2Mb+rJCpH/6CpSqt9xFVpN++x01XnN2ie9g6P5/3xelLAkXWVADpdz1IHD/KFfEXyE6V0U01OQ3UO2rEg==, tarball: https://registry.npmjs.org/resolve-cwd/-/resolve-cwd-3.0.0.tgz}
