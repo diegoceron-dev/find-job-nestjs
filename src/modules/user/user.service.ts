@@ -9,7 +9,7 @@ import Crypt from 'src/config/encrypt';
 export class UserService {
   constructor(
     @Inject('USER_REPOSITORY')
-    private userRepository: Repository<User>,
+    private repository: Repository<User>,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -19,7 +19,7 @@ export class UserService {
 
     const typeUser = type ?? 1;
 
-    return this.userRepository.save({
+    return this.repository.save({
       email,
       password: password,
       type: typeUser,
@@ -27,11 +27,11 @@ export class UserService {
   }
 
   async findAll() {
-    return await this.userRepository.find();
+    return await this.repository.find();
   }
 
   async findOne(id: number) {
-    return await this.userRepository.findOne({ where: { id } });
+    return await this.repository.findOne({ where: { id } });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
@@ -39,7 +39,7 @@ export class UserService {
 
     if (!user) throw new Error('User not found');
 
-    return await this.userRepository.save(updateUserDto);
+    return await this.repository.save(updateUserDto);
   }
 
   async remove(id: number) {
@@ -47,6 +47,6 @@ export class UserService {
 
     if (!user) throw new Error('User not found');
 
-    this.userRepository.delete(id);
+    this.repository.delete(id);
   }
 }
