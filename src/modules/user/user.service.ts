@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import Crypt from 'src/config/encrypt';
 
 @Injectable()
 export class UserService {
@@ -11,23 +12,41 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(createUserDto: CreateUserDto) {
+    const { email, password, type } = createUserDto;
+
+    // const passwordEncrypt = await Crypt.encryptItem('password');
+
+    const typeUser = type ?? 1;
+
+    return this.userRepository.save({
+      email,
+      password: password,
+      type: typeUser,
+    });
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll() {
+    return await this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    return await this.userRepository.findOne({ where: { id } });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.findOne(id);
+
+    if (!user) throw new Error('User not found');
+
+    return await this.userRepository.save(updateUserDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    const user = await this.findOne(id);
+
+    if (!user) throw new Error('User not found');
+
+    this.userRepository.delete(id);
   }
 }

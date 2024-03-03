@@ -11,6 +11,6 @@ export class User {
     @Column({ length: 500 })
     password: string
     
-    @Column({ length: 500 })
-    type: "employee"|"employer"
+    @Column()
+    type: number
 }
