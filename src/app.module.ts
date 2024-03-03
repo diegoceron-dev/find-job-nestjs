@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
-import { JobModule } from './job/job.module';
-import { ResumeModule } from './resume/resume.module';
-import { ApplyModule } from './apply/apply.module';
-import { CompanyModule } from './company/company.module';
+import { UserModule } from './modules/user/user.module';
+import { JobModule } from './modules/job/job.module';
+import { ResumeModule } from './modules/resume/resume.module';
+import { ApplyModule } from './modules/apply/apply.module';
+import { CompanyModule } from './modules/company/company.module';
 
 @Module({
   imports: [
