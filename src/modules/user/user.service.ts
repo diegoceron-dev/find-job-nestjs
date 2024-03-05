@@ -3,7 +3,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import Crypt from 'src/config/encrypt';
 
 @Injectable()
 export class UserService {
@@ -15,14 +14,16 @@ export class UserService {
   async create(createUserDto: CreateUserDto) {
     const { email, password, type } = createUserDto;
 
+    // TO DO: Encrypt password to save
     // const passwordEncrypt = await Crypt.encryptItem('password');
 
+    // TO DO: Find user default guest
     const typeUser = type ?? 1;
 
     return this.repository.save({
       email,
       password: password,
-      type: typeUser,
+      typeUser: typeUser,
     });
   }
 

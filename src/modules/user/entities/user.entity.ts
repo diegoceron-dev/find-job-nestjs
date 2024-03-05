@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { UserType } from 'src/modules/catalogs/user-type/entities/user-type.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 @Entity()
 export class User {
@@ -11,6 +12,6 @@ export class User {
     @Column({ length: 500 })
     password: string
     
-    @Column()
-    type: number
+    @ManyToOne(() => UserType, userType => userType.users)
+    userType: UserType;
 }
