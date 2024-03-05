@@ -1,26 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateExchangeDto } from './dto/create-exchange.dto';
 import { UpdateExchangeDto } from './dto/update-exchange.dto';
+import { Repository } from 'typeorm';
+import { Exchange } from './entities/exchange.entity';
 
 @Injectable()
 export class ExchangeService {
-  create(createExchangeDto: CreateExchangeDto) {
-    return 'This action adds a new exchange';
+  constructor(
+    @Inject('EXCHANGE_REPOSITORY')
+    private repository: Repository<Exchange>,
+  ) {}
+
+  async create(dto: CreateExchangeDto) {
+    return this.repository.save(dto);
   }
 
-  findAll() {
-    return `This action returns all exchange`;
+  async findAll() {
+    return await this.repository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} exchange`;
+  async findOne(id: number) {
+    return await this.repository.findOne({ where: { id } });
   }
 
-  update(id: number, updateExchangeDto: UpdateExchangeDto) {
-    return `This action updates a #${id} exchange`;
+  async update(id: number, dto: UpdateExchangeDto) {
+    const exchange = this.repository.exists({ where: { id } });
+
+    if (!exchange) throw new Error('Exchange not found');
+
+    return await this.repository.update(id, dto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} exchange`;
+  async remove(id: number) {
+    const exchange = this.repository.exists({ where: { id } });
+
+    if (!exchange) throw new Error('Exchange not found');
+
+    this.repository.delete(id);
   }
 }
