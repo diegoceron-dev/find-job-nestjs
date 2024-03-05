@@ -1,26 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateUserTypeDto } from './dto/create-user-type.dto';
 import { UpdateUserTypeDto } from './dto/update-user-type.dto';
+import { Repository } from 'typeorm';
+import { UserType } from './entities/user-type.entity';
 
 @Injectable()
 export class UserTypeService {
-  create(createUserTypeDto: CreateUserTypeDto) {
-    return 'This action adds a new userType';
+  constructor(
+    @Inject('USER_TYPE_REPOSITORY')
+    private repository: Repository<UserType>,
+  ) {}
+
+  async create(dto: CreateUserTypeDto) {
+    return this.repository.save(dto);
   }
 
-  findAll() {
-    return `This action returns all userType`;
+  async findAll() {
+    return await this.repository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} userType`;
+  async findOne(id: number) {
+    return await this.repository.findOne({ where: { id } });
   }
 
-  update(id: number, updateUserTypeDto: UpdateUserTypeDto) {
-    return `This action updates a #${id} userType`;
+  async update(id: number, dto: UpdateUserTypeDto) {
+    const userType = this.repository.exists({ where: { id } });
+
+    if (!userType) throw new Error('UserType not found');
+
+    return await this.repository.update(id, dto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} userType`;
+  async remove(id: number) {
+    const userType = this.repository.exists({ where: { id } });
+
+    if (!userType) throw new Error('UserType not found');
+
+    this.repository.delete(id);
   }
 }

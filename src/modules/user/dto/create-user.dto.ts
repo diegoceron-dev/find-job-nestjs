@@ -8,5 +8,5 @@ export class CreateUserDto {
     password: string
 
     @ApiProperty()
-    type?: number
+    userTypeId?: number
 }
