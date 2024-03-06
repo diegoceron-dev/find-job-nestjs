@@ -67,11 +67,8 @@ export class UserService {
     }
 
     if(companyIdValue === undefined) delete request.company
+    
     if(typeId === undefined) delete request.userType
-
-    console.clear()
-
-    console.log(request)
 
     return await this.repository.save(request);
   }
