@@ -10,10 +10,15 @@ import { CompanyModule } from './modules/company/company.module';
 import { ExchangeModule } from './modules/catalogs/exchange/exchange.module';
 import { UserTypeModule } from './modules/catalogs/user-type/user-type.module';
 import { JobBenefitsModule } from './modules/catalogs/job-benefits/job-benefits.module';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from './modules/auth/auth.module';
+
+const token = process.env.TOKEN;
 
 @Module({
   imports: [
     //modules
+    AuthModule,
     UserModule,
     JobModule,
     ResumeModule,
@@ -25,8 +30,15 @@ import { JobBenefitsModule } from './modules/catalogs/job-benefits/job-benefits.
     JobBenefitsModule,
     //config
     ConfigModule.forRoot(),
+    JwtModule.register({
+      secret: token,
+      signOptions: { expiresIn: '1h' },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
+  exports: [
+    JwtModule
+  ]
 })
 export class AppModule {}

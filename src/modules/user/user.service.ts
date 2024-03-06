@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UserType } from '../catalogs/user-type/entities/user-type.entity';
 import { Crypt } from 'src/config/encrypt';
+import { LoginDto } from '../auth/dto/login.dto';
 
 @Injectable()
 export class UserService {
@@ -17,11 +18,21 @@ export class UserService {
     private companyRepository: Repository<UserType>,
   ) {}
 
-  async validateExistUser(userTypeId: number): Promise<number> {
+  async validateExistUser(dto: LoginDto): Promise<User> {
+    const user = this.repository.findOne({
+      where: { email: dto.email, password: dto.password },
+    });
+
+    if (!user) throw new Error('User not found');
+
+    return user;
+  }
+
+  async validateExistTypeUser(userTypeId: number): Promise<number> {
     const typeId =
-    userTypeId === null || userTypeId === undefined || userTypeId == 0
-      ? 1
-      : userTypeId;
+      userTypeId === null || userTypeId === undefined || userTypeId == 0
+        ? 1
+        : userTypeId;
 
     const existUserType = await this.userTypeRepository.exists({
       where: { id: typeId },
@@ -29,7 +40,7 @@ export class UserService {
 
     if (!existUserType) throw new Error('User not found');
 
-    return typeId
+    return typeId;
   }
 
   async validateCompany(companyId: number): Promise<number> {
@@ -39,7 +50,7 @@ export class UserService {
 
     if (!existCompany) throw new Error('Company not found');
 
-   return companyId
+    return companyId;
   }
 
   async create(dto: CreateUserDto) {
@@ -51,9 +62,9 @@ export class UserService {
       passwordToEncrypt,
     );
 
-    const typeId = await this.validateExistUser(userTypeId)
+    const typeId = await this.validateExistTypeUser(userTypeId);
 
-    const companyIdValue = await this.validateCompany(companyId)
+    const companyIdValue = await this.validateCompany(companyId);
 
     const request = {
       email,
@@ -64,11 +75,11 @@ export class UserService {
       company: {
         id: companyIdValue,
       },
-    }
+    };
 
-    if(companyIdValue === undefined) delete request.company
-    
-    if(typeId === undefined) delete request.userType
+    if (companyIdValue === undefined) delete request.company;
+
+    if (typeId === undefined) delete request.userType;
 
     return await this.repository.save(request);
   }
