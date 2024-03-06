@@ -20,7 +20,7 @@ export class ExchangeService {
   }
 
   async findOne(id: number) {
-    return await this.repository.find();
+    return await this.repository.findOne({ where: { id } });
   }
 
   async update(id: number, dto: UpdateExchangeDto) {

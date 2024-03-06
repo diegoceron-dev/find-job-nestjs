@@ -1,26 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateResumeDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
+import { Repository } from 'typeorm';
+import { Resume } from './entities/resume.entity';
 
 @Injectable()
 export class ResumeService {
-  create(createResumeDto: CreateResumeDto) {
-    return 'This action adds a new resume';
+  constructor(
+    @Inject('RESUME_REPOSITORY')
+    private repository: Repository<Resume>,
+  ) {}
+
+  async create(dto: CreateResumeDto) {
+    return this.repository.save(dto);
   }
 
-  findAll() {
-    return `This action returns all resume`;
+  async findAll() {
+    return await this.repository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} resume`;
+  async findOne(id: number) {
+    return await this.repository.findOne({ where: { id } });
   }
 
-  update(id: number, updateResumeDto: UpdateResumeDto) {
-    return `This action updates a #${id} resume`;
+  async update(id: number, dto: UpdateResumeDto) {
+    const resume = this.repository.exists({ where: { id } });
+
+    if (!resume) throw new Error('Resume not found');
+
+    return await this.repository.update(id, dto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} resume`;
+  async remove(id: number) {
+    const resume = this.repository.exists({ where: { id } });
+
+    if (!resume) throw new Error('Resume not found');
+
+    this.repository.delete(id);
   }
 }
