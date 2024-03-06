@@ -9,4 +9,7 @@ export class CreateUserDto {
 
     @ApiProperty()
     userTypeId?: number
+
+    @ApiProperty()
+    companyId?: number
 }

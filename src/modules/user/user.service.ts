@@ -13,29 +13,67 @@ export class UserService {
     private repository: Repository<User>,
     @Inject('USER_TYPE_REPOSITORY')
     private userTypeRepository: Repository<UserType>,
+    @Inject('COMPANY_REPOSITORY')
+    private companyRepository: Repository<UserType>,
   ) {}
 
-  async create(dto: CreateUserDto) {
-    const { email, password, userTypeId } = dto;
-    const passwordToEncrypt = process.env.PASSWORD_ENCRYPT
-    const passwordEncrypted = await Crypt.encryptItem( password, passwordToEncrypt);
+  async validateExistUser(userTypeId: number): Promise<number> {
     const typeId =
-      userTypeId === null || userTypeId === undefined || userTypeId == 0
-        ? 1
-        : dto.userTypeId;
+    userTypeId === null || userTypeId === undefined || userTypeId == 0
+      ? 1
+      : userTypeId;
+
     const existUserType = await this.userTypeRepository.exists({
       where: { id: typeId },
     });
 
     if (!existUserType) throw new Error('User not found');
 
-    return await this.repository.save({
+    return typeId
+  }
+
+  async validateCompany(companyId: number): Promise<number> {
+    const existCompany = await this.companyRepository.exists({
+      where: { id: companyId },
+    });
+
+    if (!existCompany) throw new Error('Company not found');
+
+   return companyId
+  }
+
+  async create(dto: CreateUserDto) {
+    const { email, password, userTypeId, companyId } = dto;
+
+    const passwordToEncrypt = process.env.PASSWORD_ENCRYPT;
+    const passwordEncrypted = await Crypt.encryptItem(
+      password,
+      passwordToEncrypt,
+    );
+
+    const typeId = await this.validateExistUser(userTypeId)
+
+    const companyIdValue = await this.validateCompany(companyId)
+
+    const request = {
       email,
       password: passwordEncrypted,
       userType: {
-        id: typeId
-      }
-    });
+        id: typeId,
+      },
+      company: {
+        id: companyIdValue,
+      },
+    }
+
+    if(companyIdValue === undefined) delete request.company
+    if(typeId === undefined) delete request.userType
+
+    console.clear()
+
+    console.log(request)
+
+    return await this.repository.save(request);
   }
 
   async findAll() {
@@ -51,7 +89,7 @@ export class UserService {
 
     if (!user) throw new Error('User not found');
 
-    return await this.repository.update(id, dto);
+    if (dto.companyId) return await this.repository.update(id, dto);
   }
 
   async remove(id: number) {

@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/modules/user/entities/user.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class Company {
@@ -13,4 +14,7 @@ export class Company {
 
     @Column({ length: 500 })
     rfc: string
+
+    @OneToMany(() => User, user => user.company)
+    users: User[];
 }
