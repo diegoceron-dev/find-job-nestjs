@@ -1,6 +1,8 @@
 import { Exchange } from "src/modules/catalogs/exchange/entities/exchange.entity"
-import { Column, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
+import { JobBenefit } from "src/modules/catalogs/job-benefits/entities/job-benefit.entity"
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
 
+@Entity()
 export class Job {
     @PrimaryGeneratedColumn()
     id: number
@@ -17,6 +19,7 @@ export class Job {
     @ManyToOne(() => Exchange, exchange => exchange.jobs)
     exchange: Exchange;
 
-    @Column({ type: 'varchar', array: true })
-    benefits: string[];
+    @ManyToMany(() => JobBenefit, jobBenefit => jobBenefit.jobs)
+    @JoinTable()
+    benefits: JobBenefit[];
 }

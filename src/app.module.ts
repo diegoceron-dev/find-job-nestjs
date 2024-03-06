@@ -9,6 +9,7 @@ import { ApplyModule } from './modules/apply/apply.module';
 import { CompanyModule } from './modules/company/company.module';
 import { ExchangeModule } from './modules/catalogs/exchange/exchange.module';
 import { UserTypeModule } from './modules/catalogs/user-type/user-type.module';
+import { JobBenefitsModule } from './modules/catalogs/job-benefits/job-benefits.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UserTypeModule } from './modules/catalogs/user-type/user-type.module';
     // catalogs
     ExchangeModule,
     UserTypeModule,
+    JobBenefitsModule,
     //config
     ConfigModule.forRoot(),
   ],
