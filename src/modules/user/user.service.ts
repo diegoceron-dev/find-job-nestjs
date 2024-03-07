@@ -5,7 +5,6 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UserType } from '../catalogs/user-type/entities/user-type.entity';
 import { Crypt } from 'src/config/encrypt';
-import { LoginDto } from '../auth/dto/login.dto';
 
 @Injectable()
 export class UserService {
@@ -17,16 +16,6 @@ export class UserService {
     @Inject('COMPANY_REPOSITORY')
     private companyRepository: Repository<UserType>,
   ) {}
-
-  async validateExistUser(dto: LoginDto): Promise<User> {
-    const user = this.repository.findOne({
-      where: { email: dto.email, password: dto.password },
-    });
-
-    if (!user) throw new Error('User not found');
-
-    return user;
-  }
 
   async validateExistTypeUser(userTypeId: number): Promise<number> {
     const typeId =
