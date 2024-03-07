@@ -7,13 +7,22 @@ import { userTypeProviders } from '../catalogs/user-type/user-type.provider';
 import { UserTypeService } from '../catalogs/user-type/user-type.service';
 import { companyProviders } from '../company/company.provider';
 import { CompanyService } from '../company/company.service';
+import { AuthModule } from '../auth/auth.module';
+import { AuthService } from '../auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
-  imports: [DatabaseModule],  
+  imports: [DatabaseModule, AuthModule],
   controllers: [UserController],
   providers: [
-    ...companyProviders, CompanyService, 
-    ...userTypeProviders, UserTypeService,
-    ...userProviders,UserService],
+    AuthService,
+    JwtService,
+    ...companyProviders,
+    CompanyService,
+    ...userTypeProviders,
+    UserTypeService,
+    ...userProviders,
+    UserService
+  ],
 })
 export class UserModule {}

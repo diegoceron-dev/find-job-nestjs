@@ -12,17 +12,15 @@ import { UserTypeModule } from './modules/catalogs/user-type/user-type.module';
 import { JobBenefitsModule } from './modules/catalogs/job-benefits/job-benefits.module';
 import { AuthModule } from './modules/auth/auth.module';
 
-const token = process.env.TOKEN;
-
 @Module({
   imports: [
-    AuthModule,
     //modules
     UserModule,
     JobModule,
     ResumeModule,
     ApplyModule,
     CompanyModule,
+    AuthModule,
     // catalogs
     ExchangeModule,
     UserTypeModule,

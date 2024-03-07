@@ -1,8 +1,6 @@
-// auth.controller.ts
-import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './auth.guard';
+import { Body, Controller, Post } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
+import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
@@ -10,18 +8,10 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() dto: LoginDto) {
-    const user = await this.authService.validateUser(dto)
-    
-    const token = await this.authService.generateToken({ sub: user.id });
-    
-    return { access_token: token };
-  }
+    const user = await this.authService.validateUser(dto);
 
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    console.log('olaaa')
-    console.log(req)
-    return req.user;
+    const token = await this.authService.generateToken({ sub: user.id });
+
+    return { access_token: token };
   }
 }
