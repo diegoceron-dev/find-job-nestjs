@@ -10,8 +10,7 @@ import { CompanyModule } from './modules/company/company.module';
 import { ExchangeModule } from './modules/catalogs/exchange/exchange.module';
 import { UserTypeModule } from './modules/catalogs/user-type/user-type.module';
 import { JobBenefitsModule } from './modules/catalogs/job-benefits/job-benefits.module';
-
-const token = process.env.TOKEN;
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -21,6 +20,7 @@ const token = process.env.TOKEN;
     ResumeModule,
     ApplyModule,
     CompanyModule,
+    AuthModule,
     // catalogs
     ExchangeModule,
     UserTypeModule,
