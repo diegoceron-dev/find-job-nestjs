@@ -10,12 +10,8 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() dto: LoginDto) {
-    console.clear()
-
     const user = await this.authService.validateUser(dto)
-
-    console.log(user)
-
+    
     const token = await this.authService.generateToken({ sub: user.id });
     
     return { access_token: token };
@@ -24,6 +20,8 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
-    return req.user; // Usuario autenticado, disponible en la solicitud
+    console.log('olaaa')
+    console.log(req)
+    return req.user;
   }
 }

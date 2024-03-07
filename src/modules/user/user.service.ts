@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
@@ -95,7 +95,7 @@ export class UserService {
   async update(id: number, dto: UpdateUserDto) {
     const user = this.repository.exists({ where: { id } });
 
-    if (!user) throw new Error('User not found');
+    if (!user) throw new NotFoundException(); 
 
     if (dto.companyId) return await this.repository.update(id, dto);
   }
@@ -103,7 +103,7 @@ export class UserService {
   async remove(id: number) {
     const user = this.repository.exists({ where: { id } });
 
-    if (!user) throw new Error('User not found');
+    if (!user) throw new NotFoundException(); 
 
     return await this.repository.delete(id);
   }

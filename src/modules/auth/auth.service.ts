@@ -1,8 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { User } from '../user/entities/user.entity';
 import { Crypt } from 'src/config/encrypt';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +13,9 @@ export class AuthService {
     private repository: Repository<User>,
   ) {}
 
-  async validateUser(dto): Promise<User> {
+  async validateUser(dto: LoginDto): Promise<User> {
+    console.clear()
+    console.log("dto", dto)
     const passwordToEncrypt = process.env.PASSWORD_ENCRYPT;
 
     const passwordEncrypted = await Crypt.encryptItem(
@@ -25,6 +28,8 @@ export class AuthService {
     const user = await this.repository.findOne({
       where: { email: dto.email, password: passwordEncrypted },
     });
+
+    if (!user) throw new NotFoundException(); 
 
     console.log(user)
 
