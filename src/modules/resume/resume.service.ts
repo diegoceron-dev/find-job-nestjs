@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateResumeDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
 import { Repository } from 'typeorm';
@@ -26,7 +26,7 @@ export class ResumeService {
   async update(id: number, dto: UpdateResumeDto) {
     const resume = this.repository.exists({ where: { id } });
 
-    if (!resume) throw new Error('Resume not found');
+    if (!resume) throw new NotFoundException();
 
     return await this.repository.update(id, dto);
   }
@@ -34,7 +34,7 @@ export class ResumeService {
   async remove(id: number) {
     const resume = this.repository.exists({ where: { id } });
 
-    if (!resume) throw new Error('Resume not found');
+    if (!resume) throw new NotFoundException();
 
     this.repository.delete(id);
   }

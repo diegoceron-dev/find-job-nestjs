@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateJobBenefitDto } from './dto/create-job-benefit.dto';
 import { UpdateJobBenefitDto } from './dto/update-job-benefit.dto';
 import { Repository } from 'typeorm';
@@ -27,7 +27,7 @@ export class JobBenefitsService {
   async update(id: number, dto: UpdateJobBenefitDto) {
     const jobBenefit = this.repository.exists({ where: { id } });
 
-    if (!jobBenefit) throw new Error('Job Benefit  not found');
+    if (!jobBenefit) throw new NotFoundException();
 
     return await this.repository.update(id, dto);
   }
@@ -35,7 +35,7 @@ export class JobBenefitsService {
   async remove(id: number) {
     const jobBenefit = this.repository.exists({ where: { id } });
 
-    if (!jobBenefit) throw new Error('Job Benefit not found');
+    if (!jobBenefit) throw new NotFoundException();
 
     this.repository.delete(id);
   }

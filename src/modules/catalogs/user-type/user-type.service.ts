@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserTypeDto } from './dto/create-user-type.dto';
 import { UpdateUserTypeDto } from './dto/update-user-type.dto';
 import { Repository } from 'typeorm';
@@ -26,7 +26,7 @@ export class UserTypeService {
   async update(id: number, dto: UpdateUserTypeDto) {
     const userType = this.repository.exists({ where: { id } });
 
-    if (!userType) throw new Error('UserType not found');
+    if (!userType) throw new NotFoundException();
 
     return await this.repository.update(id, dto);
   }
@@ -34,7 +34,7 @@ export class UserTypeService {
   async remove(id: number) {
     const userType = this.repository.exists({ where: { id } });
 
-    if (!userType) throw new Error('UserType not found');
+    if (!userType) throw new NotFoundException();
 
     this.repository.delete(id);
   }

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateExchangeDto } from './dto/create-exchange.dto';
 import { UpdateExchangeDto } from './dto/update-exchange.dto';
 import { Repository } from 'typeorm';
@@ -26,7 +26,7 @@ export class ExchangeService {
   async update(id: number, dto: UpdateExchangeDto) {
     const exchange = this.repository.exists({ where: { id } });
 
-    if (!exchange) throw new Error('Exchange not found');
+    if (!exchange) throw new NotFoundException();
 
     return await this.repository.update(id, dto);
   }
@@ -34,7 +34,7 @@ export class ExchangeService {
   async remove(id: number) {
     const exchange = this.repository.exists({ where: { id } });
 
-    if (!exchange) throw new Error('Exchange not found');
+    if (!exchange) throw new NotFoundException();
 
     this.repository.delete(id);
   }

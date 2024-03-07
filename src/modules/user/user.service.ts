@@ -27,7 +27,7 @@ export class UserService {
       where: { id: typeId },
     });
 
-    if (!existUserType) throw new Error('User not found');
+    if (!existUserType) throw new NotFoundException();
 
     return typeId;
   }
@@ -37,7 +37,7 @@ export class UserService {
       where: { id: companyId },
     });
 
-    if (!existCompany) throw new Error('Company not found');
+    if (!existCompany) throw new NotFoundException();
 
     return companyId;
   }

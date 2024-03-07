@@ -30,8 +30,6 @@ export class AuthService {
   }
 
   async validateUser(dto: LoginDto): Promise<User> {
-    console.clear();
-    console.log('dto', dto);
     const passwordToEncrypt = process.env.PASSWORD_ENCRYPT;
 
     const passwordEncrypted = await Crypt.encryptItem(
@@ -39,15 +37,11 @@ export class AuthService {
       passwordToEncrypt,
     );
 
-    console.log('password', dto.password, passwordToEncrypt, passwordEncrypted);
-
     const user = await this.userRepository.findOne({
       where: { email: dto.email, password: passwordEncrypted },
     });
 
     if (!user) throw new NotFoundException();
-
-    console.log(user);
 
     return user;
   }
