@@ -2,8 +2,8 @@ import { ApiProperty } from "@nestjs/swagger"
 
 export class CreateApplyDto {
     @ApiProperty()
-    userId: string
+    userId: number
 
     @ApiProperty()
-    jobId: string
+    jobId: number
 }
