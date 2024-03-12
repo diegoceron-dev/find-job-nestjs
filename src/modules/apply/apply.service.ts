@@ -11,7 +11,7 @@ export class ApplyService {
     private repository: Repository<Apply>,
   ) {}
 
-  async create(dto: CreateApplyDto) {
+  async create(dto: { jobId: number; userId: number }) {
     return this.repository.save({
       job: { id: dto.jobId },
       user: { id: dto.userId },
@@ -19,7 +19,8 @@ export class ApplyService {
   }
 
   async findAll() {
-    return await this.repository.find();
+    const applies = await this.repository.find({ relations: ['user', 'job'] });
+    return applies;
   }
 
   async findOne(id: number) {
@@ -32,7 +33,7 @@ export class ApplyService {
     if (!apply) throw new NotFoundException();
 
     return await this.repository.update(id, {
-      job: { id: dto.jobId},
+      job: { id: dto.jobId },
       user: { id: dto.userId },
     });
   }
