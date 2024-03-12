@@ -24,9 +24,11 @@ export class AuthService {
   }
 
   async validateToken(token: string) {
-    return this.jwtService.verify(token, {
+    const decodedToken = this.jwtService.verify(token, {
       secret: process.env.JWT_SECRET_KEY,
     });
+    const userId = decodedToken.sub;
+    return { isValid: true, userId };
   }
 
   async validateUser(dto: LoginDto): Promise<User> {

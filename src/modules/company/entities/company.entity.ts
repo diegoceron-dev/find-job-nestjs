@@ -1,5 +1,6 @@
+import { Job } from 'src/modules/job/entities/job.entity';
 import { User } from 'src/modules/user/entities/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, OneToOne } from 'typeorm';
 
 @Entity()
 export class Company {
@@ -17,4 +18,7 @@ export class Company {
 
     @OneToMany(() => User, user => user.company)
     users: User[];
+
+    @OneToMany(() => Job, job => job.company)
+    job: Job;
 }

@@ -15,4 +15,10 @@ export class CreateJobDto {
 
     @ApiProperty()
     benefits: number[]
+
+    @ApiProperty()
+    userId: number
+
+    @ApiProperty()
+    companyId: number
 }
