@@ -50,7 +50,6 @@ export class JobService {
       perPage: 10,
     },
   ) {
-    debugger
     const { perPage, page } = pager;
 
     let query = this.repository.createQueryBuilder('job');
@@ -73,8 +72,6 @@ export class JobService {
       .take(perPage)
       .skip((page - 1) * perPage)
       .getManyAndCount();
-
-      console.log(jobs)
 
     if (jobs) {
       jobs.forEach((job, index) => {

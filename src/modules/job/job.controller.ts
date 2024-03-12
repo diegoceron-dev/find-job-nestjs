@@ -38,11 +38,7 @@ export class JobController {
     const userId = req.user.userId;
 
     const companyId = await this.companyService.findOne(null, userId);
-
-    console.clear()
-
-    console.log(userId, companyId.id)
-
+    
     return await this.jobService.findAll({
       userId: userId,
       companyId: companyId.id,
