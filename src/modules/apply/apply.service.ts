@@ -1,5 +1,4 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateApplyDto } from './dto/create-apply.dto';
 import { UpdateApplyDto } from './dto/update-apply.dto';
 import { Repository } from 'typeorm';
 import { Apply } from './entities/apply.entity';

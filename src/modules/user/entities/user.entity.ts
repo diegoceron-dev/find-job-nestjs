@@ -1,29 +1,31 @@
 import { Apply } from 'src/modules/apply/entities/apply.entity';
 import { UserType } from 'src/modules/catalogs/user-type/entities/user-type.entity';
 import { Company } from 'src/modules/company/entities/company.entity';
-import { Job } from 'src/modules/job/entities/job.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn()
-    id: number
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ length: 150 })
-    email: string
+  @Column({ length: 150 })
+  email: string;
 
-    @Column({ length: 500 })
-    password: string
-    
-    @ManyToOne(() => UserType, userType => userType.users)
-    userType: UserType;
+  @Column({ length: 500 })
+  password: string;
 
-    @ManyToOne(() => Company, company => company.users)
-    company: Company;
+  @ManyToOne(() => UserType, (userType) => userType.users)
+  userType: UserType;
 
-    @OneToMany(() => Apply, apply => apply.user)
-    applies: Apply[];
+  @ManyToOne(() => Company, (company) => company.users)
+  company: Company;
 
-    @ManyToOne(() => Job, job => job.id)
-    job: Job;
+  @OneToMany(() => Apply, (apply) => apply.user)
+  applies: Apply[];
 }

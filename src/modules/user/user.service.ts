@@ -1,10 +1,16 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UserType } from '../catalogs/user-type/entities/user-type.entity';
 import { Crypt } from 'src/config/encrypt';
+import { UserTypes } from '../common/enums/userTypes.enum';
 
 @Injectable()
 export class UserService {
@@ -82,17 +88,47 @@ export class UserService {
   }
 
   async update(id: number, dto: UpdateUserDto) {
-    const user = this.repository.exists({ where: { id } });
+    const user = await this.repository.findOne({ where: { id: id } });
 
-    if (!user) throw new NotFoundException(); 
+    if (!user) throw new NotFoundException();
 
-    if (dto.companyId) return await this.repository.update(id, dto);
+    if (user.userType.description !== UserTypes.WORKER)
+      throw new ForbiddenException();
+
+    const { email, password, userTypeId, companyId } = dto;
+
+    const passwordToEncrypt = process.env.PASSWORD_ENCRYPT;
+    const passwordEncrypted = await Crypt.encryptItem(
+      password,
+      passwordToEncrypt,
+    );
+
+    const typeId = await this.validateExistTypeUser(userTypeId);
+
+    const companyIdValue = await this.validateCompany(companyId);
+
+    const request = {
+      email,
+      password: passwordEncrypted,
+      userType: {
+        id: typeId,
+      },
+      company: {
+        id: companyIdValue,
+      },
+    };
+
+    if (companyIdValue === undefined) delete request.company;
+
+    if (typeId === undefined) delete request.userType;
+
+    return await this.repository.update(id, request);
   }
 
   async remove(id: number) {
     const user = this.repository.exists({ where: { id } });
 
-    if (!user) throw new NotFoundException(); 
+    if (!user) throw new NotFoundException();
 
     return await this.repository.delete(id);
   }
