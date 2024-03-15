@@ -13,7 +13,7 @@ export class CompanyService {
   ) {}
 
   async create(createCompanyDto: CreateCompanyDto) {
-    this.repository.save(createCompanyDto);
+    return await this.repository.save(createCompanyDto);
   }
 
   async findAll() {

@@ -132,4 +132,8 @@ export class UserService {
 
     return await this.repository.delete(id);
   }
+
+  async addCompany(userId: number, companyId: number) {
+    return await this.repository.update(userId, { company: { id: companyId } });
+  }
 }

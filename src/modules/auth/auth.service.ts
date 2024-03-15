@@ -27,7 +27,9 @@ export class AuthService {
     const decodedToken = this.jwtService.verify(token, {
       secret: process.env.JWT_SECRET_KEY,
     });
+
     const userId = decodedToken.sub;
+
     return { isValid: true, userId };
   }
 
