@@ -16,7 +16,7 @@ export class Company {
   @Column({ length: 25 })
   rfc: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   urlCover?: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

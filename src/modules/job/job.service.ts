@@ -24,6 +24,9 @@ export class JobService {
       title: dto.title,
       description: dto.description,
       monthlySalary: dto.monthlySalary,
+      active: dto.active,
+      responsibilities: dto.responsibilities,
+      requirements: dto.requirements,
       exchange: {
         id: dto.exchange,
       },
@@ -87,7 +90,7 @@ export class JobService {
   }
 
   async update(id: number, dto: UpdateJobDto) {
-    return `This action updates a #${id} job`;
+    return `This action updates a #${id} job ${dto.active}`;
   }
 
   async remove(id: number) {

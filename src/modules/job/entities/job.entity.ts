@@ -28,8 +28,27 @@ export class Job {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   monthlySalary: number;
 
+  @Column({ type: 'boolean', default: false })
+  active: boolean;
+
+  @Column({ type: 'text' })
+  responsibilities: string;
+
+  @Column({ type: 'text' })
+  requirements: string;
+
   @ManyToOne(() => Exchange, (exchange) => exchange.jobs)
   exchange: Exchange;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
 
   @ManyToMany(() => JobBenefit, (jobBenefit) => jobBenefit.jobs)
   @JoinTable()

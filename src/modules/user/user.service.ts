@@ -49,7 +49,7 @@ export class UserService {
   }
 
   async create(dto: CreateUserDto) {
-    const { email, password, userTypeId, companyId } = dto;
+    const { email, password, userTypeId } = dto;
 
     const passwordToEncrypt = process.env.PASSWORD_ENCRYPT;
     const passwordEncrypted = await Crypt.encryptItem(
@@ -58,21 +58,13 @@ export class UserService {
     );
 
     const typeId = await this.validateExistTypeUser(userTypeId);
-
-    const companyIdValue = await this.validateCompany(companyId);
-
     const request = {
       email,
       password: passwordEncrypted,
       userType: {
         id: typeId,
       },
-      company: {
-        id: companyIdValue,
-      },
     };
-
-    if (companyIdValue === undefined) delete request.company;
 
     if (typeId === undefined) delete request.userType;
 
@@ -134,6 +126,8 @@ export class UserService {
   }
 
   async addCompany(userId: number, companyId: number) {
+    await this.validateCompany(companyId);
+
     return await this.repository.update(userId, { company: { id: companyId } });
   }
 }
