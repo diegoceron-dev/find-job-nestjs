@@ -9,4 +9,13 @@ export class CreateCompanyDto {
 
   @ApiProperty()
   rfc: string;
+
+  @ApiProperty()
+  urlCover?: string;
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
 }
