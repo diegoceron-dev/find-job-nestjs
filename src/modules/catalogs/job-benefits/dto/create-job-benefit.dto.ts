@@ -1,12 +1,12 @@
-import { ApiProperty } from "@nestjs/swagger"
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateJobBenefitDto {
-    @ApiProperty()
-    name: string
+  @ApiProperty()
+  name: string;
 
-    @ApiProperty()
-    icon: string
+  @ApiProperty()
+  icon: string;
 
-    @ApiProperty()
-    description: string
+  @ApiProperty()
+  description: string;
 }

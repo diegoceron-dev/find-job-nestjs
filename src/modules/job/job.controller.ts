@@ -27,18 +27,26 @@ export class JobController {
 
   @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createJobDto: CreateJobDto, @Request() req) {
-    const userId = req.user.id;
+  async create(@Body() createJobDto: CreateJobDto, @Request() req) {
+    const userId: number = req.user.userId;
+
+    const companyId = await this.companyService.findOne(null, userId);
+
+    createJobDto.userId = userId;
+    createJobDto.companyId = companyId.id;
+
     return this.jobService.create(userId, createJobDto);
   }
 
   @UseGuards(AuthGuard)
   @Get('/my-jobs')
   async findAllMyJobs(@Request() req, @Body() getJobDto: GetJob) {
+    console.log(getJobDto);
+
     const userId = req.user.userId;
 
     const companyId = await this.companyService.findOne(null, userId);
-    
+
     return await this.jobService.findAll({
       userId: userId,
       companyId: companyId.id,
@@ -48,6 +56,8 @@ export class JobController {
 
   @Get()
   findAll(@Body() getJobDto: GetJob) {
+    console.log(getJobDto);
+
     return this.jobService.findAll({
       categoryId: null,
       userId: null,

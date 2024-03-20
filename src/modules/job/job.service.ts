@@ -14,32 +14,43 @@ export class JobService {
   ) {}
 
   async create(userId: number, dto: CreateJobDto) {
-    const benefits = dto.benefits.map((benefitId) => {
-      return {
-        id: benefitId,
+    try {
+      const benefits = dto.benefits.map((benefitId) => {
+        return {
+          id: benefitId,
+        };
+      });
+
+      const request = {
+        active: true,
+        benefits: benefits,
+        company: { id: dto.companyId },
+        description: dto.description,
+        exchange: {
+          id: dto.exchange,
+        },
+        monthlySalary: dto.monthlySalary,
+        requirements: dto.requirements,
+        responsibilities: dto.responsibilities,
+        title: dto.title,
+        user: {
+          id: userId,
+        },
+        applies: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
-    });
 
-    const job = {
-      title: dto.title,
-      description: dto.description,
-      monthlySalary: dto.monthlySalary,
-      active: dto.active,
-      responsibilities: dto.responsibilities,
-      requirements: dto.requirements,
-      exchange: {
-        id: dto.exchange,
-      },
-      benefits,
-      user: {
-        id: dto.userId,
-      },
-      company: {
-        id: dto.companyId,
-      },
-    };
+      console.log(request);
 
-    return this.repository.save(job);
+      const job = await this.repository.save(request);
+
+      console.log(job);
+      return job;
+    } catch (error) {
+      console.error('Error al crear el job:', error);
+      throw new Error('Error al crear el job');
+    }
   }
 
   async findAll(

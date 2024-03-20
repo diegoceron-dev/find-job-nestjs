@@ -28,13 +28,13 @@ export class Job {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   monthlySalary: number;
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ type: 'boolean', default: true })
   active: boolean;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   responsibilities: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   requirements: string;
 
   @ManyToOne(() => Exchange, (exchange) => exchange.jobs)
@@ -54,9 +54,6 @@ export class Job {
   @JoinTable()
   benefits: JobBenefit[];
 
-  @OneToMany(() => Apply, (apply) => apply.user)
-  applies: Apply[];
-
   @ManyToOne(() => Company, (company) => company.id)
   @JoinColumn()
   company: Company;
@@ -64,4 +61,7 @@ export class Job {
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn()
   user: User;
+
+  @OneToMany(() => Apply, (apply) => apply.user)
+  applies: Apply[];
 }
