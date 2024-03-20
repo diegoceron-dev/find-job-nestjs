@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Crypt } from 'src/config/encrypt';
 import { LoginDto } from './dto/login.dto';
@@ -46,6 +51,20 @@ export class AuthService {
     });
 
     if (!user) throw new NotFoundException();
+
+    return user;
+  }
+
+  async validateUserNoExist(dto: LoginDto): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { email: dto.email },
+    });
+
+    if (user)
+      throw new BadRequestException(
+        null,
+        'There is already a registered email account',
+      );
 
     return user;
   }

@@ -25,7 +25,10 @@ export class UserService {
 
   async validateExistTypeUser(userTypeId: number): Promise<number> {
     const typeId =
-      userTypeId === null || userTypeId === undefined || userTypeId == 0
+      userTypeId === null ||
+      userTypeId === undefined ||
+      userTypeId == 0 ||
+      userTypeId == 3
         ? 1
         : userTypeId;
 
@@ -58,6 +61,7 @@ export class UserService {
     );
 
     const typeId = await this.validateExistTypeUser(userTypeId);
+
     const request = {
       email,
       password: passwordEncrypted,

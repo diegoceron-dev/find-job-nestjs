@@ -22,10 +22,14 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '../auth/auth.guard';
 import { User } from './entities/user.entity';
+import { AuthService } from '../auth/auth.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+  ) {}
 
   @ApiOperation({ summary: 'Crear un nuevo usuario' })
   @ApiBody({ type: CreateUserDto })
@@ -36,8 +40,10 @@ export class UserController {
   })
   @ApiBadRequestResponse({ description: 'Datos de usuario no válidos' })
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    await this.authService.validateUserNoExist(createUserDto);
+
+    return await this.userService.create(createUserDto);
   }
 
   @UseGuards(AuthGuard)
@@ -46,11 +52,13 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.userService.findOne(+id);
   }
 
+  @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @Patch()
   update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
@@ -59,11 +67,10 @@ export class UserController {
     return this.userService.update(+userId, updateUserDto);
   }
 
+  @UseGuards(AuthGuard)
   @ApiBearerAuth()
-  @Delete()
-  remove(@Request() req) {
-    const userId = req.user.userId;
-
-    return this.userService.remove(userId);
+  @Delete(':id')
+  remove(@Param('id') id: number) {
+    return this.userService.remove(id);
   }
 }
