@@ -46,6 +46,12 @@ export class ApplyService {
       .skip((page - 1) * perPage)
       .getManyAndCount();
 
+    if (applies) {
+      applies.forEach((apply) => {
+        apply.user = { id: apply.user.id } as User;
+      });
+    }
+
     // const applies = await this.repository.find({ relations: ['user', 'job'] });
 
     // return applies;
