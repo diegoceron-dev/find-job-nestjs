@@ -45,7 +45,17 @@ export class ApplyController {
 
   @Get()
   findAll() {
-    return this.applyService.findAll();
+    return this.applyService.findAll({ userId: null });
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/my-applies')
+  async findAllMyApplies(@Request() req) {
+    const userId = req.user.userId;
+
+    return await this.applyService.findAll({
+      userId: userId,
+    });
   }
 
   @Get(':id')
