@@ -80,7 +80,14 @@ export class UserService {
   }
 
   async findOne(id: number) {
-    return await this.repository.findOne({ where: { id } });
+    const user = await this.repository.findOne({
+      where: { id },
+      relations: ['userType'],
+    });
+
+    if (!user) throw new ForbiddenException();
+
+    return user;
   }
 
   async update(id: number, dto: UpdateUserDto) {

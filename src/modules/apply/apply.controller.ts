@@ -31,7 +31,10 @@ export class ApplyController {
 
     const user = await this.userService.findOne(userId);
 
-    if (user.userType.description !== UserTypes.WORKER)
+    if (
+      user.userType.description.toUpperCase() !==
+      UserTypes.WORKER.toString().toUpperCase()
+    )
       throw new ForbiddenException();
 
     return await this.applyService.create({
