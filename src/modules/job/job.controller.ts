@@ -1,20 +1,68 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { JobService } from './job.service';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
+import { AuthGuard } from '../auth/auth.guard';
+import { GetJob } from './dto/get-job.dto';
+import { UserService } from '../user/user.service';
+import { CompanyService } from '../company/company.service';
 
 @Controller('job')
 export class JobController {
-  constructor(private readonly jobService: JobService) {}
+  constructor(
+    private readonly jobService: JobService,
+    private readonly userService: UserService,
+    private readonly companyService: CompanyService,
+  ) {}
 
+  @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createJobDto: CreateJobDto) {
-    return this.jobService.create(createJobDto);
+  async create(@Body() createJobDto: CreateJobDto, @Request() req) {
+    const userId: number = req.user.userId;
+
+    const companyId = await this.companyService.findOne(null, userId);
+
+    createJobDto.userId = userId;
+    createJobDto.companyId = companyId.id;
+
+    return this.jobService.create(userId, createJobDto);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/my-jobs')
+  async findAllMyJobs(@Request() req, @Body() getJobDto: GetJob) {
+    console.log(getJobDto);
+
+    const userId = req.user.userId;
+
+    const companyId = await this.companyService.findOne(null, userId);
+
+    return await this.jobService.findAll({
+      userId: userId,
+      companyId: companyId.id,
+      categoryId: null,
+    });
   }
 
   @Get()
-  findAll() {
-    return this.jobService.findAll();
+  findAll(@Body() getJobDto: GetJob) {
+    console.log(getJobDto);
+
+    return this.jobService.findAll({
+      categoryId: null,
+      userId: null,
+      companyId: null,
+    });
   }
 
   @Get(':id')

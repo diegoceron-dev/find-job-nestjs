@@ -1,40 +1,76 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  HttpStatus,
+  Request,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { AuthGuard } from '../auth/auth.guard';
+import { User } from './entities/user.entity';
+import { AuthService } from '../auth/auth.service';
 
-@ApiBearerAuth()
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
-  
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+  ) {}
 
+  @ApiOperation({ summary: 'Crear un nuevo usuario' })
+  @ApiBody({ type: CreateUserDto })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Usuario creado correctamente',
+    type: User,
+  })
+  @ApiBadRequestResponse({ description: 'Datos de usuario no válidos' })
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto) {
+    await this.authService.validateUserNoExist(createUserDto);
+
+    return await this.userService.create(createUserDto);
+  }
 
   @UseGuards(AuthGuard)
   @Get()
   findAll() {
-    console.clear()
     return this.userService.findAll();
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.userService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @Patch()
+  update(@Request() req, @Body() updateUserDto: UpdateUserDto) {
+    const userId = req.user.userId;
+
+    return this.userService.update(+userId, updateUserDto);
   }
 
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.userService.remove(id);
   }
 }

@@ -4,11 +4,11 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateApplyDto extends PartialType(CreateApplyDto) {
     @ApiProperty()
-    id: string
+    id: number
 
     @ApiProperty()
-    userId: string
+    userId: number
 
     @ApiProperty()
-    jobId: string
+    jobId: number
 }

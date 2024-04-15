@@ -1,10 +1,16 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UserType } from '../catalogs/user-type/entities/user-type.entity';
 import { Crypt } from 'src/config/encrypt';
+import { UserTypes } from '../common/enums/userTypes.enum';
 
 @Injectable()
 export class UserService {
@@ -19,7 +25,10 @@ export class UserService {
 
   async validateExistTypeUser(userTypeId: number): Promise<number> {
     const typeId =
-      userTypeId === null || userTypeId === undefined || userTypeId == 0
+      userTypeId === null ||
+      userTypeId === undefined ||
+      userTypeId == 0 ||
+      userTypeId == 3
         ? 1
         : userTypeId;
 
@@ -27,7 +36,7 @@ export class UserService {
       where: { id: typeId },
     });
 
-    if (!existUserType) throw new Error('User not found');
+    if (!existUserType) throw new NotFoundException();
 
     return typeId;
   }
@@ -37,12 +46,58 @@ export class UserService {
       where: { id: companyId },
     });
 
-    if (!existCompany) throw new Error('Company not found');
+    if (!existCompany) throw new NotFoundException();
 
     return companyId;
   }
 
   async create(dto: CreateUserDto) {
+    const { email, password, userTypeId } = dto;
+
+    const passwordToEncrypt = process.env.PASSWORD_ENCRYPT;
+    const passwordEncrypted = await Crypt.encryptItem(
+      password,
+      passwordToEncrypt,
+    );
+
+    const typeId = await this.validateExistTypeUser(userTypeId);
+
+    const request = {
+      email,
+      password: passwordEncrypted,
+      userType: {
+        id: typeId,
+      },
+    };
+
+    if (typeId === undefined) delete request.userType;
+
+    return await this.repository.save(request);
+  }
+
+  async findAll() {
+    return await this.repository.find();
+  }
+
+  async findOne(id: number) {
+    const user = await this.repository.findOne({
+      where: { id },
+      relations: ['userType'],
+    });
+
+    if (!user) throw new ForbiddenException();
+
+    return user;
+  }
+
+  async update(id: number, dto: UpdateUserDto) {
+    const user = await this.repository.findOne({ where: { id: id } });
+
+    if (!user) throw new NotFoundException();
+
+    if (user.userType.description !== UserTypes.WORKER)
+      throw new ForbiddenException();
+
     const { email, password, userTypeId, companyId } = dto;
 
     const passwordToEncrypt = process.env.PASSWORD_ENCRYPT;
@@ -70,30 +125,20 @@ export class UserService {
 
     if (typeId === undefined) delete request.userType;
 
-    return await this.repository.save(request);
-  }
-
-  async findAll() {
-    return await this.repository.find();
-  }
-
-  async findOne(id: number) {
-    return await this.repository.findOne({ where: { id } });
-  }
-
-  async update(id: number, dto: UpdateUserDto) {
-    const user = this.repository.exists({ where: { id } });
-
-    if (!user) throw new NotFoundException(); 
-
-    if (dto.companyId) return await this.repository.update(id, dto);
+    return await this.repository.update(id, request);
   }
 
   async remove(id: number) {
     const user = this.repository.exists({ where: { id } });
 
-    if (!user) throw new NotFoundException(); 
+    if (!user) throw new NotFoundException();
 
     return await this.repository.delete(id);
+  }
+
+  async addCompany(userId: number, companyId: number) {
+    await this.validateCompany(companyId);
+
+    return await this.repository.update(userId, { company: { id: companyId } });
   }
 }

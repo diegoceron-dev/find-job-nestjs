@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Crypt } from 'src/config/encrypt';
 import { LoginDto } from './dto/login.dto';
@@ -24,14 +29,16 @@ export class AuthService {
   }
 
   async validateToken(token: string) {
-    return this.jwtService.verify(token, {
+    const decodedToken = this.jwtService.verify(token, {
       secret: process.env.JWT_SECRET_KEY,
     });
+
+    const userId = decodedToken.sub;
+
+    return { isValid: true, userId };
   }
 
   async validateUser(dto: LoginDto): Promise<User> {
-    console.clear();
-    console.log('dto', dto);
     const passwordToEncrypt = process.env.PASSWORD_ENCRYPT;
 
     const passwordEncrypted = await Crypt.encryptItem(
@@ -39,15 +46,25 @@ export class AuthService {
       passwordToEncrypt,
     );
 
-    console.log('password', dto.password, passwordToEncrypt, passwordEncrypted);
-
     const user = await this.userRepository.findOne({
       where: { email: dto.email, password: passwordEncrypted },
     });
 
     if (!user) throw new NotFoundException();
 
-    console.log(user);
+    return user;
+  }
+
+  async validateUserNoExist(dto: LoginDto): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { email: dto.email },
+    });
+
+    if (user)
+      throw new BadRequestException(
+        null,
+        'There is already a registered email account',
+      );
 
     return user;
   }
